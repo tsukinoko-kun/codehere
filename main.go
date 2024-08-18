@@ -8,6 +8,7 @@ import (
 
 	"github.com/charmbracelet/huh"
 	"github.com/tsukinoko-kun/codehere/internal/license"
+	"github.com/tsukinoko-kun/codehere/internal/open"
 	"github.com/tsukinoko-kun/codehere/internal/settings"
 	"github.com/tsukinoko-kun/codehere/internal/template"
 	"github.com/tsukinoko-kun/codehere/internal/util"
@@ -113,6 +114,20 @@ func main() {
 		if err := exec.Command("git", "add", ".").Run(); err != nil {
 			_, _ = fmt.Fprintln(os.Stderr, err)
 			os.Exit(11)
+			return
+		}
+	}
+
+	// open editor
+	editor := open.Application_None
+	switch initSettings.Template {
+	case template.Template_Go:
+		editor = open.Application_Go
+	}
+	if editor != open.Application_None {
+		if err := open.Open(editor, initSettings.Loc); err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, err)
+			os.Exit(12)
 			return
 		}
 	}
